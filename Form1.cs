@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace aplicação_Desktop
+namespace TelaDeSplash
 {
     public partial class Form1 : Form
     {
@@ -17,27 +17,19 @@ namespace aplicação_Desktop
             InitializeComponent();
         }
 
-        private void progressBar1_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             if(progressBar1.Value < 100)
             {
-                progressBar1.Value = progressBar1.Value  + 2;
+                progressBar1.Value = progressBar1.Value + 2;
             }
             else
             {
                 timer1.Enabled = false;
-                Tela_inicial tela =  new Tela_inicial();
-                tela.Show();
+                Cadastro cad = new Cadastro();
+                cad.Show();
                 this.Visible = false;
             }
-            
-
-            
         }
     }
 }
