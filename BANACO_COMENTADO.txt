@@ -1,0 +1,235 @@
+CREATE DATABASE curso_sql;
+
+
+CREATE TABLE funcionarios 
+(
+	id int unsigned not null auto_increment,
+    nome varchar(45) not null,
+    salario double not null default '0',
+    departamento varchar(45) not null,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE veiculos
+(
+	id int unsigned not null auto_increment,
+    funcionario_id int unsigned default null,
+    veiculo varchar(45) not null default '',
+    placa varchar(10) not null default '',
+    PRIMARY KEY (id),
+    CONSTRAINT fk_veiculos_funcionarios FOREIGN KEY (funcionario_id) REFERENCES funcionarios (id)
+);
+
+CREATE TABLE salarios
+(
+	faixa varchar(45) not null,
+    inicio double not null,
+    fim double not null,
+    PRIMARY KEY (faixa)
+);
+
+
+ 
+ 
+INSERT INTO funcionarios (id,nome,salario,departamento) values (1,'wanderlei',2000,'ti');
+INSERT INTO funcionarios (id,nome,salario,departamento) values (2,'GUSTAVO',2000,'JURIDICO');
+INSERT INTO funcionarios (id,nome,salario,departamento) values (3,'ANGELA',2000,'ANALISTA');
+INSERT INTO funcionarios (id,nome,salario,departamento) values (4,'JOSE',5000,'PROGRAMADOR');
+INSERT INTO funcionarios (id,nome,salario,departamento) values (5,'GABRIELA',1500,'VENDEDOR');
+
+
+SELECT * FROM funcionarios;
+
+SELECT * FROM funcionarios where  salario> 2000;
+SELECT * FROM funcionarios where  NOME ='WANDERLEI';
+SELECT * FROM funcionarios where id = '4';
+
+UPDATE funcionarios SET salario = ROUND (salario * 1.1,2);
+
+UPDATE funcionarios SET  salario = salario * 2.2  WHERE id = 2;
+UPDATE funcionarios SET  salario = salario * 2.2;
+
+SET SQL_SAFE_UPDATES = 0;
+
+
+DELETE FROM  funcionarios WHERE id = 4;
+
+
+
+INSERT INTO  veiculos (funcionario_id,veiculo,placa) VALUES (2,'fiat','bdd-0102');
+
+SELECT * FROM veiculos;
+
+UPDATE veiculos SET funcionario_id = 1 WHERE  id = 3;
+
+INSERT INTO salarios (faixa,inicio,fim) VALUES ('PROGRAMADOR',1000,2000);
+INSERT INTO salarios (faixa,inicio,fim) VALUES ('PROGRAMADOR PLENO',1000,4000);
+/*inserindo valores na tabela */
+
+SELECT * FROM salarios;
+/*selecionando tabela salarios */
+
+SELECT *FROM funcionarios INNER JOIN veiculos  ON funcionario_id = funcionario_id;
+/*inner join com as tabelas veiculos e funcionarios*/
+
+SELECT *FROM funcionarios LEFT JOIN veiculos  ON funcionario_id = funcionario_id;
+/*PUXA AS TABELAS PARA O LADO DIREITO*/
+
+SELECT *FROM funcionarios RIGHT  JOIN veiculos  ON funcionario_id = funcionario_id;
+/*PUXA AS TABELAS PARA O LADO ESQUERDO*/
+
+INSERT INTO veiculos (funcionario_id,veiculo,placa) VALUES (null,'moto','bfr-0310');
+/*inserindo cadastro na tabela veiculo*/
+
+SELECT *FROM funcionarios LEFT JOIN veiculos  ON funcionario_id = funcionario_id
+UNION
+SELECT *FROM funcionarios RIGHT  JOIN veiculos  ON funcionario_id = funcionario_id;
+/*TRAZENDO DADOS DE DUAS TABELAS COM COMANDO UNION*/
+
+create TABLE cpfs
+(
+ id  int unsigned not null,
+ cpf varchar(15) not null,
+ primary key (id),
+ constraint fk_cpf foreign key (id) references funcionarios (id)
+);
+/* criação de mais uma tabela para referencia */
+
+INSERT INTO cpfs(id,cpf) VALUES ("1",'123456789');
+INSERT INTO cpfs(id,cpf) VALUES ("2",'987456123');
+INSERT INTO cpfs(id,cpf) VALUES ("3",'245698712');
+INSERT INTO cpfs(id,cpf) VALUES ("5",'658932471');
+/*INSERINDO DADOS NA TABELA CPF*/
+
+SELECT * FROM cpfs;
+/*selecionando a tablela cpfs*/
+
+SELECT * FROM funcionarios INNER JOIN cpfs ON funcionarios.id = cpfs.id; 
+/*selecionando com inner join os funcionarios id e cpf com relacionamento*/
+
+SELECT * FROM funcionarios INNER JOIN cpfs using (id); 
+/* mesma forma acima so que com menos cosdigos */
+
+CREATE TABLE clientes
+(
+  id int unsigned not null auto_increment,
+  nome varchar(45) not null,
+  quem_indicou int unsigned,
+  primary key(id),
+  constraint fk_quem_indicou foreign key (quem_indicou) references clientes(id)
+);
+ select * from clientes;
+ 
+ insert into clientes (id,nome,quem_indicou) values (1,'beto',null);
+ insert into clientes (id,nome,quem_indicou) values (2,'ricardo',1);
+ insert into clientes (id,nome,quem_indicou) values (3,'vanessa',2);
+ insert into clientes (id,nome,quem_indicou) values (4,'gal',1);
+ 
+ select a.nome as clientes ,b. nome as "	quem indicou"
+ from clientes a  join clientes b on a.quem_indicou = b.id; 
+ /*seleção das tabelas e quem indicou ,apelidadndo as tabelas self join*/
+ 
+ /*
+ INNER JOIN veiculos ON veiculos.funcionario_id = funcionarios.id
+ INNER JOIN cpfs ON cpfs.id = funcionarios.id
+ */
+ 
+ CREATE VIEW funcionarios_a AS SELECT * FROM funcionarios WHERE salario >= 1800;
+ 
+ SELECT * FROM funcionarios;
+ 
+ UPDATE funcionarios SET salario = 1500 WHERE  id =3;
+ /*alateraçõ no salario do id 3 na tabela funcionarios alterando salairio do funcionario*/
+ 
+ select max(salario)from funcionarios;
+ /*obtendo salario maximo de uma tabela ,execultando comando max*/
+ 
+ 
+ select count(*) from funcionarios;
+ /*contando os funcionarios cadstrados*/
+ 
+ select count(*) from funcionarios where  salario > 2000; 
+ /*vendo quantos funcionarios tem salarios maior que 2000 */
+ 
+ 
+ select sum(salario) from funcionarios;
+ /*vendo a soma de todos os salarios dos funcionarios */
+ 
+ select avg(salario) from funcionarios;
+ /* caucula as medias dos salarios dos funcionarios cadastrados*/
+ 
+ select avg(salario) from funcionarios where departamento = 'ti';
+ /*fazendo a soma dos salarios do departamento de t.i especifico*/
+ 
+ 
+select *from funcionarios limit 2;
+/* busca na tabela funcionarios os dois primeros cadastrados*/
+
+
+select *from funcionarios offset ;
+/* comando de busca na tabela que avançã pula registro do resultado*/
+
+select max(salario) from funcionarios;
+/*buscado salario maximo na tabela funcionario*/
+
+select max(salario) from funcionarios where departamento = 'ti';
+/*buscando maior salario de um deparmaneto especifico*/
+
+select min(salario) from funcionarios;
+/*buscando o menor salario dos funcionarios*/
+
+select min(salario) from funcionarios where departamento = 'ti';
+/*buscando o menor salario na tabela de um departamento especifico*/
+
+select distinct(departamento) from funcionarios;
+/*selecçao de departamantos na minha tabela vendo quis deparamento tenho cadastrado*/
+
+select * from funcionarios order by nome ;
+/*buscando funcionarios por nome em ordem alafabetica da pra fazer a busca nome salario deparamento */
+
+select * from funcionarios order by nome desc ;
+/*buscando funcionarios por nome em ordem alafabetica decescente */
+
+select departamento ,avg(salario) from funcionarios group by departamento;
+/* selecinando departamento e a soma dos salarios de cada um com comando group by */
+
+select departamento ,avg(salario) from funcionarios group by departamento
+ having avg(salario) > 1000;
+ /*fazendo uma busca dos deparatmento e e determinado um valor especisificos e salario
+ determinado um valor a ser buscado*/
+ 
+ select  departamento,count(*) from funcionarios group by departamento;
+ /*contagem dos deparatamentos e funcionarios de cada departamento*/
+ 
+ create user 'wanderlei' @'ip' identified by '123456789'
+ /*
+ crianado um usuário no mysql falta colocar ip da maquina que deve asessar */
+ 
+ 
+ CREATE USER  'gal'@'%' IDENTIFIED BY 'gauvestoni13';
+  /*permito que gustavo acesse o bando com qualquer ip fazendo o login e senha de qual quer lugar*/
+ 
+ 
+  create user 'gustavo'@'localhost' IDENTIFIED BY 'gauvestoni13';
+  /*liberer acesso so para minha maquina com localhost*/
+  
+  grant  select on curso_sql.* to 'gustavo'@'%';
+  /*liberou o usuário apenas para select nas tabelas */
+  
+ 
+  
+  
+  
+  
+ 
+ 
+
+
+ 
+ 
+ 
+
+
+
+
+
